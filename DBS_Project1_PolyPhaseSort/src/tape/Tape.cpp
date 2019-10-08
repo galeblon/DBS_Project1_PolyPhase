@@ -5,34 +5,97 @@
  *      Author: gales
  */
 
-#include <sstream>
 #include "Tape.h"
 
 Tape::Tape(){
-	//TODO: set correct mode whether you want to read or write tape
-	this->fs.open("Tape_default", std::fstream::out);
+	this->name = "Tape_default";
+	this->ws.open(this->name.c_str(), std::ios::out);
+	this->rs.open(this->name.c_str(), std::ios::in);
+	this->debug = false;
+	this->readMode = false;
+	this->endReached = false;
+	this->currPosition = 0;
 }
 
 Tape::Tape(std::string id) {
-	std::string tapeName = std::string("Tape_") + id;
-	this->fs.open(tapeName.c_str(), std::fstream::out | std::fstream::in);
+	this->name = std::string("Tape_") + id;
+	this->ws.open(this->name.c_str(), std::ios::out);
+	this->rs.open(this->name.c_str(), std::ios::in);
+	this->debug = false;
+	this->readMode = false;
+	this->endReached = false;
+	this->currPosition = 0;
+}
+
+Tape::Tape(std::string id, bool debug){
+	this->name = std::string("Tape_") + id;
+	this->ws.open(this->name.c_str(), std::ios::out);
+	this->rs.open(this->name.c_str(), std::ios::in);
+	this->debug = debug;
+	this->readMode = false;
+	this->endReached = false;
+	this->currPosition = 0;
+}
+
+Tape::Tape(const Tape& other){
+	this->name = other.name;
+	this->ws.open(this->name.c_str(), std::ios::out);
+	this->rs.open(this->name.c_str(), std::ios::in);
+	this->debug = other.debug;
+	this->readMode = other.readMode;
+	this->endReached = false;
+	this->currPosition = 0;
 }
 
 Tape::~Tape() {
-	this->fs.close();
+	this->ws.close();
+	this->rs.close();
 }
 
 Record Tape::ReadRecord(){
 	double a, b, c;
-
 	std::string line;
-	std::getline(this->fs, line);
+	std::getline(this->rs, line);
+	this->currPosition = this->rs.tellg();
+	if(line == ""){
+		this->endReached = true;
+		this->rs.clear();
+	}
 	std::stringstream ss(line);
 	ss >> a >> b >> c;
 	return Record(a, b, c);
 }
 
 void Tape::WriteRecord(Record record){
-	this->fs << record.GetA() << " " << record.GetB() << " " << record.GetC() << '\n';
-	this->fs.flush();
+	this->ws << record.GetA() << " " << record.GetB() << " " << record.GetC() << '\n';
+	this->ws.flush();
+}
+
+
+void Tape::GotoLine(unsigned int pos){
+	this->rs.seekg(pos);
+}
+
+
+void Tape::printContents(){
+	std::string line;
+	std::cout << "\n|========================|\n" << this->name << " contents:\n";
+	while(!this->rs.eof()){
+		double a, b, c;
+		std::string line;
+		std::getline(this->rs, line);
+		std::stringstream ss(line);
+		ss >> a >> b >> c;
+		std::cout << this->rs.eof() << rs.fail() << rs.bad() << rs.good();
+		if(line != ""){
+			std::cout << "\tRecord: ";
+			std::cout.width(40);
+			std::cout << line;
+			std::cout.width(0);
+			std::cout << " -> [" << -b/a  << "]";
+		}
+		std::cout << '\n';
+	}
+	this->rs.clear();
+	this->GotoLine(this->currPosition);
 }
