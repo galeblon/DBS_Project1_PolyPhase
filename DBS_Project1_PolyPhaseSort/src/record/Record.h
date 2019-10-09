@@ -10,6 +10,7 @@
 
 class Record {
 public:
+	Record();
 	Record(double a, double b, double c);
 	virtual ~Record();
 
@@ -19,10 +20,15 @@ public:
 	double GetB(){ return b;}
 	double GetC(){ return c;}
 
+	double GetKey(){ return -b/a;}
+
+	bool isValid() {return correct;}
+
 private:
 	double a;
 	double b;
 	double c;
+	bool correct;
 };
 
 #endif /* RECORD_RECORD_H_ */

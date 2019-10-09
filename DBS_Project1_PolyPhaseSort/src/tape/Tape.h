@@ -29,6 +29,11 @@ public:
 
 	std::string getName() {return this->name;}
 	bool IsAtEnd(){ return this->endReached;}
+
+	Record head;
+	int runs;
+	int runsDummy;
+
 private:
 	std::fstream ws;
 	std::fstream rs;
@@ -36,10 +41,9 @@ private:
 	std::string name;
 	void GotoLine(unsigned int pos);
 	bool debug;
-	bool readMode;
 	bool endReached;
-
 	unsigned int currPosition;
+	bool readMode;
 };
 
 #endif /* TAPE_TAPE_H_ */
