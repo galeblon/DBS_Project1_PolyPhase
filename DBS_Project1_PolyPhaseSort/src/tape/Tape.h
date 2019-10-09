@@ -20,6 +20,7 @@ public:
 	Tape(std::string id);
 	Tape(std::string id, bool debug);
 	Tape(const Tape&);
+
 	virtual ~Tape();
 
 	Record ReadRecord();
