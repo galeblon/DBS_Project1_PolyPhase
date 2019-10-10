@@ -38,7 +38,6 @@ Record RandomDataSource::generateRecord(){
 		b = (double)std::rand() / RAND_MAX * COEFFICIENT_MAX;
 		c = (double)std::rand() / RAND_MAX * COEFFICIENT_MAX;
 	}
-	this->recordsToGenerate--;
 	return Record(a, b, c);
 }
 
@@ -53,15 +52,15 @@ Record RandomDataSource::getRunFromRandom(Tape& tape, Record rec_cont){
 
 		if(!first)
 			// Ordered by smallest first
-			if(rec_prev.GetKey() > rec_curr.GetKey()){
+			if(rec_prev.GetKey() > rec_curr.GetKey())
 				return rec_curr;
-			}
 		if(rec_curr.isValid()){
 			if(first &&
 					((tape.head.isValid() && tape.head.GetKey() > rec_curr.GetKey())
 					|| !tape.head.isValid()))
 				tape.runs++;
 			tape.WriteRecord(rec_curr);
+			this->recordsToGenerate--;
 		}
 		rec_prev = rec_curr;
 		first = false;
