@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include "./tape/Tape.h"
 #include "datasource/file/FileDataSource.h"
+#include "datasource/random/RandomDataSource.h"
 #include "datasource/DataSource.h"
 #include <string>
 #include <sstream>
@@ -20,11 +21,11 @@ using namespace std;
 
 #define TAPE_NUM 3
 
-void InitialDistribution(Tape tapes[], int numOfTapes, int numOfRecordsToGenerate);
 void InitialDistribution(Tape tapes[], int numOfTapes);
 
 
 int main() {
+	//TODO set srand to time null
 	Tape* tapes[TAPE_NUM];
 	std::stringstream ss;
 	for(int i=0; i<TAPE_NUM; i++){
@@ -33,8 +34,9 @@ int main() {
 		ss.str("");
 	}
 	FileDataSource fsrc;
-	DataSource* src = &fsrc;
-	src->InitialDistribution(tapes, TAPE_NUM, "records");
+	RandomDataSource rsrc;
+	DataSource* src = &rsrc;
+	src->InitialDistribution(tapes, TAPE_NUM, "100");
 
 	for(int i=0; i<TAPE_NUM; i++){
 		tapes[i]->printContents();

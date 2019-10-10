@@ -13,28 +13,19 @@ void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::str
 	int fib1 = 1;
 	int fib2 = 1;
 	Record rec_cont;
-	//int unlucky_tape;
 	while(!baseFile.eof()){
-		bool end = false;
 		for(int i=0; i<numOfTapes-1; i++){
 			while(tapes[i]->runs <fib2 && !baseFile.eof()){
 				rec_cont = getRunFromFile(baseFile, *tapes[i], rec_cont);
 			}
 			if(baseFile.eof()){
 				tapes[i]->runsDummy = fib2 - tapes[i]->runs;
-				//unlucky_tape = i;
-				end = true;
 				break;
 			}
-			if(end)
-				break;
 			fib2 += fib1;
 			fib1 = fib2 - fib1;
 		}
 	}
-	//if(tapes[unlucky_tape].runsDummy > 0){
-	//	tapes[1].runsDummy += tapes[(unlucky_tape-1) < 0 ? numOfTapes-2 : unlucky_tape-1].runs;
-	//}
 	baseFile.close();
 }
 

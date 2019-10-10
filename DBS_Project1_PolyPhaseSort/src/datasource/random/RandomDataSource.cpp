@@ -8,33 +8,27 @@
 #include <datasource/random/RandomDataSource.h>
 
 void RandomDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg){
+	std::istringstream(arg) >> this->recordsToGenerate;
 	int fib1 = 1;
 	int fib2 = 1;
 	Record rec_cont;
-	std::istringstream(arg) >> this->recordsToGenerate;
 	while(this->recordsToGenerate > 0){
-		bool end = false;
 		for(int i=0; i<numOfTapes-1; i++){
 			while(tapes[i]->runs < fib2 && this->recordsToGenerate > 0){
 				rec_cont = getRunFromRandom(*tapes[i], rec_cont);
-				//rec_cont = getRandomRun(*tapes[i], rec_cont);
 			}
 			if(this->recordsToGenerate == 0){
 				tapes[i]->runsDummy = fib2 - tapes[i]->runs;
-				end = true;
 				break;
 			}
+			fib2 += fib1;
+			fib1 = fib2 - fib1;
 		}
-		if(end)
-			break;
-		fib2 += fib1;
-		fib1 = fib2 - fib1;
 	}
 }
 
 
 Record RandomDataSource::generateRecord(){
-	//TODO set srand to time null
 	int COEFFICIENT_MAX = 100;
 	double a = 1;
 	double b = 0;
@@ -44,12 +38,11 @@ Record RandomDataSource::generateRecord(){
 		b = (double)std::rand() / RAND_MAX * COEFFICIENT_MAX;
 		c = (double)std::rand() / RAND_MAX * COEFFICIENT_MAX;
 	}
-
+	this->recordsToGenerate--;
 	return Record(a, b, c);
 }
 
 Record RandomDataSource::getRunFromRandom(Tape& tape, Record rec_cont){
-	//TODO Test this shit nibba
 	Record rec_prev, rec_curr;
 	bool first = true;
 	while(this->recordsToGenerate > 0){
@@ -59,6 +52,7 @@ Record RandomDataSource::getRunFromRandom(Tape& tape, Record rec_cont){
 			rec_curr = generateRecord();
 
 		if(!first)
+			// Ordered by smallest first
 			if(rec_prev.GetKey() > rec_curr.GetKey()){
 				return rec_curr;
 			}
