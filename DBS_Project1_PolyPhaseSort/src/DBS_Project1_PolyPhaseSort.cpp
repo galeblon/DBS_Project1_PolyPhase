@@ -6,19 +6,21 @@
 // Description : PolyPhase sorting program.
 //============================================================================
 
-#include <fstream>
-
-#include <iostream>
-#include <cstdlib>
 #include "./tape/Tape.h"
+#include "datasource/DataSource.h"
 #include "datasource/file/FileDataSource.h"
 #include "datasource/random/RandomDataSource.h"
 #include "datasource/keyboard/KeyBoardDataSource.h"
-#include "datasource/DataSource.h"
+#include <cstdlib>
 #include <string>
+#include <fstream>
 #include <sstream>
+#include <iostream>
 
 using namespace std;
+
+bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, bool verbose);
+void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 
 int main(int argc, char** argv) {
 	std::srand(time(NULL));
@@ -76,11 +78,23 @@ int main(int argc, char** argv) {
 		return 2;
 	}
 
+	// Reset heads
+	for(int i=0; i<TAPE_NUM; i++){
+		tapes[i]->head = Record();
+	}
+
+	std::cout << "\n\nPhase 0 (After distribution)\n";
 	if(verbose){
 		for(int i=0; i<TAPE_NUM; i++){
 			tapes[i]->printContents();
 		}
 	}
+	int phase = 1;
+	do{
+		std::cout << "\n\nPhase " << phase << "\t| Disk usage so far: DATA_HERE" << phase << ":\n";
+		phase++;
+	} while(!sortPolyPhaseSinglePhase(tapes, TAPE_NUM, verbose));
+
 
 	// Cleanup
 	for(int i=0; i<TAPE_NUM; i++)
@@ -88,4 +102,110 @@ int main(int argc, char** argv) {
 	delete[] tapes;
 
 	return 0;
+}
+
+bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, bool verbose){
+	// Find empty tape
+	int outputTapeIndex;
+	for(int i=0; i<tapeNum;i++)
+		if(tapes[i]->runs == 0){
+			outputTapeIndex = i;
+			//tapes[i]->head = Record();
+			break;
+		}
+
+	// Find how many merges will be run
+	int merges = 0;
+	bool mergesSet = false;
+	for(int i=0; i<tapeNum; i++)
+		if((!mergesSet || merges > (tapes[i]->runs+tapes[i]->runsDummy)) && tapes[i]->runs != 0){
+				merges = tapes[i]->runs;
+				mergesSet = true;
+		}
+
+	while(merges > 0 && mergesSet){
+		int tapesMask = 0;
+		for(int i=0; i<tapeNum; i++){
+			if(tapes[i]->runsDummy > 0){
+				tapes[i]->runsDummy--;
+				continue;
+			}
+			if(i != outputTapeIndex && tapes[i]->runs > 0){
+				tapes[i]->runs--;
+				tapesMask |= 1<<i;
+			}
+		}
+
+		tapes[outputTapeIndex]->runs++;
+		// Merge using tapes allowed by the mask
+		merging(tapes, tapeNum, outputTapeIndex, tapesMask);
+		merges--;
+	}
+	tapes[outputTapeIndex]->head = Record();
+	if(verbose){
+		for(int i=0; i<tapeNum; i++){
+			tapes[i]->printContents();
+		}
+	}
+	int nonZeroTapes = 0;
+	for(int i=0; i<tapeNum; i++)
+		nonZeroTapes += tapes[i]->runs > 0 ? 1 : 0;
+
+	if(nonZeroTapes == 1)
+		// Sorted
+		return true;
+	return false;
+}
+
+
+void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask){
+	int endRunMask = 0 | (1 << outTape);
+	int loadNewMask = 0;
+	Record min;
+	int min_index;
+	while(true){
+		for(int i=0; i<tapeNum; i++){
+			// If this tape is supposed to be used this merge and has yet ended.
+			if((tapesMask & 1<<i) && !(endRunMask & 1<<i)){
+				Record curr_rec;
+				if(!tapes[i]->head.isValid()){
+					// Try to read record, if can't then we are at end
+					curr_rec = tapes[i]->ReadRecord();
+					if(!curr_rec.isValid()){
+						endRunMask |= 1<<i;
+						continue;
+					}
+				} else {
+					// There is already valid record in head
+					// Check if it was already used this merge
+					if(loadNewMask & 1<<i){
+						// It was already used, try to load a new record. Check if run ends
+						Record old_rec = tapes[i]->head;
+						curr_rec = tapes[i]->ReadRecord();
+						if(!curr_rec.isValid() || old_rec.GetKey() > curr_rec.GetKey()){
+							// Run has been broken
+							endRunMask |= 1<<i;
+							loadNewMask &= !(1<<i);
+							continue;
+						}
+						loadNewMask &= !(1<<i);
+					} else {
+						// It wasn't yet used, no need to load new one
+						curr_rec = tapes[i]->head;
+					}
+				}
+				if(!min.isValid() || min.GetKey() > curr_rec.GetKey()){
+					// New min
+					min = curr_rec;
+					min_index = i;
+				}
+			}
+		}
+		if(!min.isValid())
+			// It appears we are done here
+			break;
+		tapes[outTape]->WriteRecord(min);
+		loadNewMask |= 1<<min_index;
+		min = Record();
+	}
 }
