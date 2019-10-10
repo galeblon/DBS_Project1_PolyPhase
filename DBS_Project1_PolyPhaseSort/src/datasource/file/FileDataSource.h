@@ -9,17 +9,19 @@
 #define SRC_DATASOURCE_FILE_FILEDATASOURCE_H_
 
 #include "../../tape/Tape.h"
+#include "../DataSource.h"
 #include <fstream>
 
-class FileDataSource {
+class FileDataSource: public DataSource {
 public:
 	/*
 	 * Reads file once and distributes runs into N-1 tapes
 	 * */
-	static void InitialDistribution(Tape* tapes[], int numOfTapes, std::fstream& fs);
+	~FileDataSource() {}
+	void InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg);
 private:
-	static Record loadFromFile(std::fstream& fs);
-	static Record getRunFromFile(std::fstream& fs, Tape& tape, Record rec_cont);
+	Record loadFromFile(std::fstream& fs);
+	Record getRunFromFile(std::fstream& fs, Tape& tape, Record rec_cont);
 
 };
 

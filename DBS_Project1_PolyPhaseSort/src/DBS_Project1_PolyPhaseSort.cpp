@@ -10,8 +10,9 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <./tape/Tape.h>
-#include <datasource/file/FileDataSource.h>
+#include "./tape/Tape.h"
+#include "datasource/file/FileDataSource.h"
+#include "datasource/DataSource.h"
 #include <string>
 #include <sstream>
 
@@ -31,10 +32,9 @@ int main() {
 		tapes[i] = new Tape(ss.str());
 		ss.str("");
 	}
-	fstream baseFile;
-	baseFile.open("records", std::ios::in);
-	FileDataSource::InitialDistribution(tapes, TAPE_NUM, baseFile);
-	baseFile.close();
+	FileDataSource fsrc;
+	DataSource* src = &fsrc;
+	src->InitialDistribution(tapes, TAPE_NUM, "records");
 
 	for(int i=0; i<TAPE_NUM; i++){
 		tapes[i]->printContents();

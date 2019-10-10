@@ -7,11 +7,13 @@
 
 #include <datasource/file/FileDataSource.h>
 
-void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::fstream& baseFile){
+void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg){
+	std::fstream baseFile;
+	baseFile.open(arg.c_str(), std::ios::in);
 	int fib1 = 1;
 	int fib2 = 1;
 	Record rec_cont;
-	int unlucky_tape;
+	//int unlucky_tape;
 	while(!baseFile.eof()){
 		bool end = false;
 		for(int i=0; i<numOfTapes-1; i++){
@@ -20,7 +22,7 @@ void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::fst
 			}
 			if(baseFile.eof()){
 				tapes[i]->runsDummy = fib2 - tapes[i]->runs;
-				unlucky_tape = i;
+				//unlucky_tape = i;
 				end = true;
 				break;
 			}
@@ -33,6 +35,7 @@ void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::fst
 	//if(tapes[unlucky_tape].runsDummy > 0){
 	//	tapes[1].runsDummy += tapes[(unlucky_tape-1) < 0 ? numOfTapes-2 : unlucky_tape-1].runs;
 	//}
+	baseFile.close();
 }
 
 Record FileDataSource::loadFromFile(std::fstream& fs){
@@ -59,17 +62,17 @@ Record FileDataSource::getRunFromFile(std::fstream& fs, Tape& tape, Record rec_c
 		if(!first)
 			// Ordered by smallest first
 			if(rec_prev.GetKey() > rec_curr.GetKey()){
-				//tape.runs++;
 				return rec_curr;
 			}
 		if(rec_curr.isValid()){
-			if(first && ((tape.head.isValid() && tape.head.GetKey() > rec_curr.GetKey()) || !tape.head.isValid()))
+			if(first &&
+					((tape.head.isValid() && tape.head.GetKey() > rec_curr.GetKey())
+					|| !tape.head.isValid()))
 				tape.runs++;
 			tape.WriteRecord(rec_curr);
 		}
 		rec_prev = rec_curr;
 		first = false;
 	}
-	//tape.runs++;
 	return Record();
 }
