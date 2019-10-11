@@ -14,7 +14,7 @@
 #include <limits>
 #include "../record/Record.h"
 
-#define BUFFOR_SIZE 2
+#define BUFFOR_SIZE 50
 
 class Tape {
 public:
@@ -32,6 +32,9 @@ public:
 
 	std::string getName() {return this->name;}
 	bool IsAtEnd(){ return this->endReached;}
+
+	int getDiskWrites(){ return this->diskWrites;}
+	int getDiskReads(){ return this->diskReads;}
 
 	Record head;
 	int runs;
@@ -60,6 +63,9 @@ private:
 	Record buffor[BUFFOR_SIZE];
 	int buffer_pointer;
 	bool buffer_loaded;
+
+	int diskReads;
+	int diskWrites;
 };
 
 #endif /* TAPE_TAPE_H_ */

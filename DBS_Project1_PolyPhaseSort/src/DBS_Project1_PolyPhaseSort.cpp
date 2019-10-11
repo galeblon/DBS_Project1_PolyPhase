@@ -23,6 +23,8 @@ bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, bool verbose);
 void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 void printPhase(Tape* tapes[], int tapeNum, bool verbose);
 
+// TODO make tape buffer size a program parameter
+// TODO print latest disk usage after do while loop
 int main(int argc, char** argv) {
 	std::srand(time(NULL));
 	if(argc < 4){
@@ -93,7 +95,12 @@ int main(int argc, char** argv) {
 	// Repeat merging phase until it's sorted
 	int phase = 1;
 	do{
-		std::cout << "\n\nPhase " << phase << "\t| Disk usage so far: DATA_HERE" << phase << ":\n";
+		int dr=0, dw=0;
+		for(int i=0; i<TAPE_NUM; i++){
+			dr += tapes[i]->getDiskReads();
+			dw += tapes[i]->getDiskWrites();
+		}
+		std::cout << "\n\nPhase " << phase << "\t| Disk usage so far: W:" << dw << " R:" << dr << ":\n";
 		phase++;
 	} while(!sortPolyPhaseSinglePhase(tapes, TAPE_NUM, verbose));
 

@@ -7,28 +7,64 @@
 
 #include "Tape.h"
 
-Tape::Tape(): head(), runs(0), runsDummy(0), endReached(0), currPosition(0), readMode(false), buffer_pointer(0), buffer_loaded(false){
+Tape::Tape(): head(),
+			  runs(0),
+			  runsDummy(0),
+			  endReached(0),
+			  currPosition(0),
+			  readMode(false),
+			  buffer_pointer(0),
+			  buffer_loaded(false),
+			  diskReads(0),
+			  diskWrites(0){
 	this->name = "Tape_default";
 	this->ws.open(this->name.c_str(), std::ios::out);
 	this->rs.open(this->name.c_str(), std::ios::in);
 	this->debug = false;
 }
 
-Tape::Tape(std::string id):  head(), runs(0), runsDummy(0), endReached(0), currPosition(0), readMode(false), buffer_pointer(0), buffer_loaded(false){
+Tape::Tape(std::string id):  head(),
+							 runs(0),
+							 runsDummy(0),
+							 endReached(0),
+							 currPosition(0),
+							 readMode(false),
+							 buffer_pointer(0),
+							 buffer_loaded(false),
+							 diskReads(0),
+							 diskWrites(0){
 	this->name = std::string("Tape_") + id;
 	this->ws.open(this->name.c_str(), std::ios::out);
 	this->rs.open(this->name.c_str(), std::ios::in);
 	this->debug = false;
 }
 
-Tape::Tape(std::string id, bool debug): head(), runs(0), runsDummy(0), endReached(0), currPosition(0), readMode(false), buffer_pointer(0), buffer_loaded(false){
+Tape::Tape(std::string id, bool debug): head(),
+										runs(0),
+										runsDummy(0),
+										endReached(0),
+										currPosition(0),
+										readMode(false),
+										buffer_pointer(0),
+										buffer_loaded(false),
+										diskReads(0),
+										diskWrites(0){
 	this->name = std::string("Tape_") + id;
 	this->ws.open(this->name.c_str(), std::ios::out);
 	this->rs.open(this->name.c_str(), std::ios::in);
 	this->debug = debug;
 }
 
-Tape::Tape(const Tape& other): head(), runs(0), runsDummy(0), endReached(0), currPosition(0), readMode(false), buffer_pointer(0), buffer_loaded(false){
+Tape::Tape(const Tape& other): head(),
+							   runs(0),
+							   runsDummy(0),
+							   endReached(0),
+							   currPosition(0),
+							   readMode(false),
+							   buffer_pointer(0),
+							   buffer_loaded(false),
+							   diskReads(0),
+							   diskWrites(0){
 	this->name = other.name;
 	this->ws.open(this->name.c_str(), std::ios::out);
 	this->rs.open(this->name.c_str(), std::ios::in);
@@ -49,7 +85,7 @@ void Tape::LoadBufforInternal(){
 	if(buffor[0].isValid()){
 		this->buffer_pointer = 0;
 		this->buffer_loaded = true;
-		// Increment disk reads
+		this->diskReads++;
 	}
 }
 
@@ -62,9 +98,9 @@ void Tape::SaveBufforInternal(){
 		}
 	}
 	if(saved){
-		// Increment disk writes
 		this->buffer_pointer = 0;
 		this->buffer_loaded = false;
+		this->diskWrites++;
 	}
 }
 
