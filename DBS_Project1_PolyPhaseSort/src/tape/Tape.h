@@ -14,6 +14,8 @@
 #include <limits>
 #include "../record/Record.h"
 
+#define BUFFOR_SIZE 2
+
 class Tape {
 public:
 	Tape();
@@ -36,6 +38,15 @@ public:
 	int runsDummy;
 
 private:
+	void LoadBufforInternal();
+	void SaveBufforInternal();
+	Record ReadRecordInternal();
+	void WriteRecordInternal(Record record);
+
+	double printBufferReadMode();
+	void printBufferWriteMode(bool first, double prev_key);
+
+
 	std::fstream ws;
 	std::fstream rs;
 
@@ -45,6 +56,10 @@ private:
 	bool endReached;
 	unsigned int currPosition;
 	bool readMode;
+
+	Record buffor[BUFFOR_SIZE];
+	int buffer_pointer;
+	bool buffer_loaded;
 };
 
 #endif /* TAPE_TAPE_H_ */

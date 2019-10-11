@@ -24,12 +24,12 @@ void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 void printPhase(Tape* tapes[], int tapeNum, bool verbose);
 
 int main(int argc, char** argv) {
-//	std::srand(time(NULL));
+	std::srand(time(NULL));
 	if(argc < 4){
 		std::cout << "This is a simple program presenting the PolyPhase merging algorithm used on records in form of coefficients of polynomial of degree 2, with delta >= 0\n"
 				  << "Program usage:\n"
 				  << "programName [numberOfTapes] [dataSource] [arg] [verbose]\n"
-				  << "\tnumberOfTapes - number of tapes used during the algorithm (note only N-1 tapes take part in merging at any time)\n"
+				  << "\tnumberOfTapes - number of tapes used during the algorithm. Minimum 3 tapes required (note only N-1 tapes take part in merging at any time)\n"
 				  << "\tdataSource - only takes 'F' - file, 'R' - random generated, 'K' - standard input\n"
 				  << "\targ - if file data source is selected provide file name containing records, otherwise provide number of records to generate/read from input\n"
 				  << "\tverbose optional parameter if present with any value will print the tapes state after each phase\n";
@@ -42,6 +42,8 @@ int main(int argc, char** argv) {
 	bool verbose;
 	try{
 		std::istringstream(argv[1]) >> TAPE_NUM;
+		if(TAPE_NUM < 3)
+			throw "Not enough tapes";
 		switch(argv[2][0]){
 			case 'f':
 			case 'F':
