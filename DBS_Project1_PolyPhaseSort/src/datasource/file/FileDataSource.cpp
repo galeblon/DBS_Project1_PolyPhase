@@ -10,21 +10,27 @@
 void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg){
 	std::fstream baseFile;
 	baseFile.open(arg.c_str(), std::ios::in);
-	int fib1 = 1;
-	int fib2 = 1;
 	Record rec_cont;
+	//Initial run to start the fill
+	rec_cont = getRunFromFile(baseFile, *tapes[0], rec_cont);
+	int cycle_tape_index = 0;
+
 	while(!baseFile.eof()){
 		for(int i=0; i<numOfTapes-1; i++){
-			while(tapes[i]->runs <fib2 && !baseFile.eof()){
+			if(i == cycle_tape_index)
+				continue;
+			int runsToGet = tapes[cycle_tape_index]->runs;
+			while(runsToGet > 0 && !baseFile.eof()){
+				int old_runs = tapes[i]->runs;
 				rec_cont = getRunFromFile(baseFile, *tapes[i], rec_cont);
+				if(old_runs != tapes[i]->runs)
+					runsToGet--;
 			}
 			if(baseFile.eof()){
-				tapes[i]->runsDummy = fib2 - tapes[i]->runs;
-				break;
+				tapes[i]->runsDummy = runsToGet;
 			}
-			fib2 += fib1;
-			fib1 = fib2 - fib1;
 		}
+		cycle_tape_index = (cycle_tape_index+1)%(numOfTapes-1);
 	}
 	baseFile.close();
 }
