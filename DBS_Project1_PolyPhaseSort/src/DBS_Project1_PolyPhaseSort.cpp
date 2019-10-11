@@ -24,7 +24,7 @@ void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 void printPhase(Tape* tapes[], int tapeNum, bool verbose);
 
 int main(int argc, char** argv) {
-	std::srand(time(NULL));
+//	std::srand(time(NULL));
 	if(argc < 4){
 		std::cout << "This is a simple program presenting the PolyPhase merging algorithm used on records in form of coefficients of polynomial of degree 2, with delta >= 0\n"
 				  << "Program usage:\n"
@@ -116,7 +116,7 @@ bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, bool verbose){
 	int merges = 0;
 	bool mergesSet = false;
 	for(int i=0; i<tapeNum; i++)
-		if((!mergesSet || merges > (tapes[i]->runs+tapes[i]->runsDummy)) && tapes[i]->runs != 0){
+		if((!mergesSet || merges > (tapes[i]->runs)) && tapes[i]->runs != 0 && tapes[i]->runsDummy == 0){
 				merges = tapes[i]->runs;
 				mergesSet = true;
 		}

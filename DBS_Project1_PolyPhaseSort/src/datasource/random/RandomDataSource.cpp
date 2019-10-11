@@ -9,21 +9,27 @@
 
 void RandomDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg){
 	std::istringstream(arg) >> this->recordsToGenerate;
-	int fib1 = 1;
-	int fib2 = 1;
 	Record rec_cont;
+	//Initial run to start the fill
+	rec_cont = getRunFromRandom(*tapes[0], rec_cont);
+	int cycle_tape_index = 0;
+
 	while(this->recordsToGenerate > 0){
 		for(int i=0; i<numOfTapes-1; i++){
-			while(tapes[i]->runs < fib2 && this->recordsToGenerate > 0){
+			if(i == cycle_tape_index)
+				continue;
+			int runsToGet = tapes[cycle_tape_index]->runs;
+			while(runsToGet > 0 && this->recordsToGenerate > 0){
+				int old_runs = tapes[i]->runs;
 				rec_cont = getRunFromRandom(*tapes[i], rec_cont);
+				if(old_runs != tapes[i]->runs)
+					runsToGet--;
 			}
 			if(this->recordsToGenerate == 0){
-				tapes[i]->runsDummy = fib2 - tapes[i]->runs;
-				break;
+				tapes[i]->runsDummy = runsToGet;
 			}
-			fib2 += fib1;
-			fib1 = fib2 - fib1;
 		}
+		cycle_tape_index = (cycle_tape_index+1)%(numOfTapes-1);
 	}
 }
 

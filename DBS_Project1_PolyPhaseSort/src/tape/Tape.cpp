@@ -90,8 +90,8 @@ void Tape::printContents(){
 		std::cout.width(40);
 		std::cout << ss.str();
 		std::cout.width(0);
-		std::cout << " -> [" << -this->head.GetB()/this->head.GetA()  << "]\n";
-		prev_key = -this->head.GetKey();
+		std::cout << " -> [" << this->head.GetKey()  << "]\n";
+		prev_key = this->head.GetKey();
 		first = false;
 	}
 	if(!readMode)
