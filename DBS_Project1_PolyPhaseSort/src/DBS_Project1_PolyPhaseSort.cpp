@@ -21,6 +21,7 @@ using namespace std;
 
 bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, bool verbose);
 void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
+void printPhase(Tape* tapes[], int tapeNum, bool verbose);
 
 int main(int argc, char** argv) {
 	std::srand(time(NULL));
@@ -85,15 +86,7 @@ int main(int argc, char** argv) {
 
 	// Print state after initial distribution
 	std::cout << "\n\nPhase 0 (After distribution)\n";
-	for(int i=0; i<TAPE_NUM; i++){
-		std::cout << tapes[i]->getName() << ' ' << tapes[i]->runs+tapes[i]->runsDummy << '(' << tapes[i]->runsDummy <<") runs";
-		if(verbose){
-			std::cout << " contents:\n";
-			tapes[i]->printContents();
-		} else {
-			std::cout << '\n';
-		}
-	}
+	printPhase(tapes, TAPE_NUM, verbose);
 
 	// Repeat merging phase until it's sorted
 	int phase = 1;
@@ -101,7 +94,6 @@ int main(int argc, char** argv) {
 		std::cout << "\n\nPhase " << phase << "\t| Disk usage so far: DATA_HERE" << phase << ":\n";
 		phase++;
 	} while(!sortPolyPhaseSinglePhase(tapes, TAPE_NUM, verbose));
-
 
 	// Cleanup
 	for(int i=0; i<TAPE_NUM; i++)
@@ -148,14 +140,7 @@ bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, bool verbose){
 		merges--;
 	}
 	tapes[outputTapeIndex]->head = Record();
-	for(int i=0; i<tapeNum; i++){
-		std::cout << tapes[i]->getName() << ' ' << tapes[i]->runs+tapes[i]->runsDummy << '(' << tapes[i]->runsDummy <<") runs";
-		if(verbose){
-			std::cout << "|| contents: \n";
-			tapes[i]->printContents();
-		} else
-			std::cout << '\n';
-	}
+	printPhase(tapes, tapeNum, verbose);
 	int nonZeroTapes = 0;
 	for(int i=0; i<tapeNum; i++)
 		nonZeroTapes += tapes[i]->runs > 0 ? 1 : 0;
@@ -216,5 +201,17 @@ void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask){
 		tapes[outTape]->WriteRecord(min);
 		loadNewMask |= 1<<min_index;
 		min = Record();
+	}
+}
+
+
+void printPhase(Tape* tapes[], int tapeNum, bool verbose){
+	for(int i=0; i<tapeNum; i++){
+			std::cout << tapes[i]->getName() << ' ' << tapes[i]->runs+tapes[i]->runsDummy << '(' << tapes[i]->runsDummy <<") runs";
+		if(verbose){
+			std::cout << "|| contents: \n";
+			tapes[i]->printContents();
+		} else
+			std::cout << '\n';
 	}
 }
