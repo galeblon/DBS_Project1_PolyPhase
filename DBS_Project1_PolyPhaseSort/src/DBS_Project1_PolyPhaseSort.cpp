@@ -83,12 +83,19 @@ int main(int argc, char** argv) {
 		tapes[i]->head = Record();
 	}
 
+	// Print state after initial distribution
 	std::cout << "\n\nPhase 0 (After distribution)\n";
-	if(verbose){
-		for(int i=0; i<TAPE_NUM; i++){
+	for(int i=0; i<TAPE_NUM; i++){
+		std::cout << tapes[i]->getName() << ' ' << tapes[i]->runs+tapes[i]->runsDummy << '(' << tapes[i]->runsDummy <<") runs";
+		if(verbose){
+			std::cout << " contents:\n";
 			tapes[i]->printContents();
+		} else {
+			std::cout << '\n';
 		}
 	}
+
+	// Repeat merging phase until it's sorted
 	int phase = 1;
 	do{
 		std::cout << "\n\nPhase " << phase << "\t| Disk usage so far: DATA_HERE" << phase << ":\n";
@@ -110,7 +117,6 @@ bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, bool verbose){
 	for(int i=0; i<tapeNum;i++)
 		if(tapes[i]->runs == 0){
 			outputTapeIndex = i;
-			//tapes[i]->head = Record();
 			break;
 		}
 
@@ -142,10 +148,13 @@ bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, bool verbose){
 		merges--;
 	}
 	tapes[outputTapeIndex]->head = Record();
-	if(verbose){
-		for(int i=0; i<tapeNum; i++){
+	for(int i=0; i<tapeNum; i++){
+		std::cout << tapes[i]->getName() << ' ' << tapes[i]->runs+tapes[i]->runsDummy << '(' << tapes[i]->runsDummy <<") runs";
+		if(verbose){
+			std::cout << "|| contents: \n";
 			tapes[i]->printContents();
-		}
+		} else
+			std::cout << '\n';
 	}
 	int nonZeroTapes = 0;
 	for(int i=0; i<tapeNum; i++)

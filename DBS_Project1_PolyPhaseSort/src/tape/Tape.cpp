@@ -82,7 +82,7 @@ void Tape::printContents(){
 	double prev_key;
 	bool first = true;
 	std::string line;
-	std::cout << this->name << ' ' << this->runs+this->runsDummy << '(' << this->runsDummy <<") runs | contents:\n";
+	//std::cout << this->name << ' ' << this->runs+this->runsDummy << '(' << this->runsDummy <<") runs | contents:\n";
 	if(this->readMode && this->head.isValid()){
 		std::stringstream ss;
 		ss << this->head.GetA() << " " << this->head.GetB() << " " << this->head.GetC();
@@ -91,7 +91,7 @@ void Tape::printContents(){
 		std::cout << ss.str();
 		std::cout.width(0);
 		std::cout << " -> [" << -this->head.GetB()/this->head.GetA()  << "]\n";
-		prev_key = -this->head.GetB()/this->head.GetA();
+		prev_key = -this->head.GetKey();
 		first = false;
 	}
 	if(!readMode)
