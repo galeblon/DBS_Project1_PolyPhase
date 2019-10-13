@@ -40,9 +40,9 @@ Record RandomDataSource::generateRecord(){
 	double b = 0;
 	double c = 1;
 	while((b*b - 4*a*c) < 0){
-		a = (double)std::rand() / RAND_MAX * COEFFICIENT_MAX;
-		b = (double)std::rand() / RAND_MAX * COEFFICIENT_MAX;
-		c = (double)std::rand() / RAND_MAX * COEFFICIENT_MAX;
+		a = -COEFFICIENT_MAX + (double)std::rand() / RAND_MAX * COEFFICIENT_MAX * 2;
+		b = -COEFFICIENT_MAX + (double)std::rand() / RAND_MAX * COEFFICIENT_MAX * 2;
+		c = -COEFFICIENT_MAX + (double)std::rand() / RAND_MAX * COEFFICIENT_MAX * 2;
 	}
 	return Record(a, b, c);
 }

@@ -10,11 +10,13 @@
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <limits>
 #include "../record/Record.h"
 
-#define BUFFOR_SIZE 50
+#define BUFFER_SIZE 10
+// Size of buffer in bytes will be BUFFOR_SIZE * sizeof(double)
 
 class Tape {
 public:
@@ -41,13 +43,15 @@ public:
 	int runsDummy;
 
 private:
-	void LoadBufforInternal();
-	void SaveBufforInternal();
+	void LoadBufferInternal();
+	void SaveBufferInternal();
 	Record ReadRecordInternal();
 	void WriteRecordInternal(Record record);
 
 	double printBufferReadMode();
 	void printBufferWriteMode(bool first, double prev_key);
+
+	void printSingleRecord(Record rec);
 
 
 	std::fstream ws;
@@ -60,7 +64,7 @@ private:
 	unsigned int currPosition;
 	bool readMode;
 
-	Record buffor[BUFFOR_SIZE];
+	Record buffer[BUFFER_SIZE];
 	int buffer_pointer;
 	bool buffer_loaded;
 

@@ -25,6 +25,7 @@ void printPhase(Tape* tapes[], int tapeNum, bool verbose);
 
 // TODO make tape buffer size a program parameter
 // TODO print latest disk usage after do while loop
+// TODO implement another verbosity level
 int main(int argc, char** argv) {
 	std::srand(time(NULL));
 	if(argc < 4){
