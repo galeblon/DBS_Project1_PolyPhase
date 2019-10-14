@@ -24,9 +24,6 @@ bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, int verbose);
 void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 void printPhase(Tape* tapes[], int tapeNum, int verbose);
 
-// TODO make tape buffer size a program parameter
-// TODO print latest disk usage after do while loop
-// TODO implement another verbosity level
 int main(int argc, char** argv) {
 	std::srand(time(NULL));
 	if(argc < 4){
@@ -103,6 +100,8 @@ int main(int argc, char** argv) {
 	int dr=0, dw=0;
 	int phase = 1;
 	do{
+		dr = 0;
+		dw = 0;
 		for(int i=0; i<TAPE_NUM; i++){
 			dr += tapes[i]->getDiskReads();
 			dw += tapes[i]->getDiskWrites();
@@ -111,11 +110,13 @@ int main(int argc, char** argv) {
 		phase++;
 	} while(!sortPolyPhaseSinglePhase(tapes, TAPE_NUM, verbose));
 
+	dr = 0;
+	dw = 0;
 	for(int i=0; i<TAPE_NUM; i++){
 		dr += tapes[i]->getDiskReads();
 		dw += tapes[i]->getDiskWrites();
 	}
-	std::cout << "\n\nDisk usage total: W:" << dw << "R:" << dr << '\n';
+	std::cout << "\n\nDisk usage total: W:" << dw << " R:" << dr << '\n';
 	// Print the sorted file
 	if(verbose >= VERBOSITY_NORMAL){
 		std::cout << "\n\nSorted file:\n";
