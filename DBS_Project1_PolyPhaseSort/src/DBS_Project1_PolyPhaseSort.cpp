@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 		if(argc >= 5)
 			std::istringstream(argv[4]) >> verbose;
 	} catch(...){
-		std::cerr << "Exception during parsing of arguments";
+		std::cerr << "Exception during parsing of arguments\n";
 		return 1;
 	}
 
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 		src->InitialDistribution(tapes, TAPE_NUM, arg, verbose);
 		delete src;
 	} catch (char const* err){
-		std::cerr << "Exception during initial distribution: "<< err;
+		std::cerr << "Exception during initial distribution: "<< err << '\n';
 		return 2;
 	}
 
