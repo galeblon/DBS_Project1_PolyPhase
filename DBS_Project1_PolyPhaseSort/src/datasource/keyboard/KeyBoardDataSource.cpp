@@ -7,7 +7,8 @@
 
 #include <datasource/keyboard/KeyBoardDataSource.h>
 
-void KeyBoardDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg){
+void KeyBoardDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg, int verbosity_level){
+	this->verbosity_level = verbosity_level;
 	std::istringstream(arg) >> this->recordsToGenerate;
 	Record rec_cont;
 	//Initial run to start the fill

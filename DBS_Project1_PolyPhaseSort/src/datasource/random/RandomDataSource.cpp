@@ -7,7 +7,8 @@
 
 #include <datasource/random/RandomDataSource.h>
 
-void RandomDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg){
+void RandomDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg, int verbosity_level){
+	this->verbosity_level = verbosity_level;
 	std::istringstream(arg) >> this->recordsToGenerate;
 	Record rec_cont;
 	//Initial run to start the fill
@@ -44,6 +45,8 @@ Record RandomDataSource::generateRecord(){
 		b = -COEFFICIENT_MAX + (double)std::rand() / RAND_MAX * COEFFICIENT_MAX * 2;
 		c = -COEFFICIENT_MAX + (double)std::rand() / RAND_MAX * COEFFICIENT_MAX * 2;
 	}
+	if(this->verbosity_level >= VERBOSITY_NORMAL)
+		std::cout << a << " " << b << " " << c << '\n';
 	return Record(a, b, c);
 }
 

@@ -15,7 +15,7 @@
 class DataSource {
 public:
 	virtual ~DataSource() {}
-	virtual void InitialDistribution(Tape* Tapes[], int numOfTapes, std::string arg) = 0;
+	virtual void InitialDistribution(Tape* Tapes[], int numOfTapes, std::string arg, int verbosity_level) = 0;
 };
 
 #endif /* SRC_DATASOURCE_DATASOURCE_H_ */

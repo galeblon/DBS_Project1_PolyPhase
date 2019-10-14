@@ -7,7 +7,8 @@
 
 #include <datasource/file/FileDataSource.h>
 
-void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg){
+void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg, int verbosity_level){
+	this->verbosity_level = verbosity_level;
 	std::fstream baseFile;
 	baseFile.open(arg.c_str(), std::ios::in);
 	Record rec_cont;
@@ -42,6 +43,8 @@ Record FileDataSource::loadFromFile(std::fstream& fs){
 	if(line != ""){
 		std::stringstream ss(line);
 		ss >> a >> b >> c;
+		if(this->verbosity_level >= VERBOSITY_NORMAL)
+			std::cout << a << " " << b << " " << c << '\n';
 		return Record(a, b, c);
 	}
 	return Record();
