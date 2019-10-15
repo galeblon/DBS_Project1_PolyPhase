@@ -25,6 +25,7 @@ void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 void printPhase(Tape* tapes[], int tapeNum, int verbose);
 
 int main(int argc, char** argv) {
+	// TODO bring back time(NULL)
 	std::srand(time(NULL));
 	if(argc < 4){
 		std::cout << "This is a simple program presenting the PolyPhase merging algorithm used on records in form of coefficients of polynomial of degree 2, with delta >= 0\n"

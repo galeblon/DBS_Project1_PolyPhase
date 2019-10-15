@@ -77,15 +77,23 @@ Tape::~Tape() {
 }
 
 void Tape::LoadBufferInternal(){
-	for(int i=0; i<BUFFER_SIZE; i++){
-		buffer[i] = ReadRecordInternal();
-		if(!buffer[i].isValid())
-			break;
-	}
+	double arr[3*BUFFER_SIZE];
+	this->rs.read((char*) arr, 3*sizeof(double)*BUFFER_SIZE);
+	int bytes_read = this->rs.gcount();
+	int elements_loaded = bytes_read/(3*sizeof(double));
+
+	for(int i=0; i<elements_loaded; i++)
+		buffer[i] = Record(arr[3*i], arr[3*i+1], arr[3*i+2]);
+	for(int i=elements_loaded; i<BUFFER_SIZE; i++)
+		buffer[i] = Record();
+
 	if(buffer[0].isValid()){
-		this->buffer_pointer = 0;
 		this->buffer_loaded = true;
 		this->diskReads++;
+	}
+    if(elements_loaded < BUFFER_SIZE){
+			this->endReached = true;
+			this->rs.clear();
 	}
 }
 
@@ -97,7 +105,6 @@ void Tape::SaveBufferInternal(){
 			arr[3*i+0] = buffer[i].GetA();
 			arr[3*i+1] = buffer[i].GetB();
 			arr[3*i+2] = buffer[i].GetC();
-			//WriteRecordInternal(buffer[i]);
 			toSave = true;
 		}
 		else
@@ -128,10 +135,12 @@ Record Tape::ReadRecord(){
 		this->buffer_loaded = false;
 		this->buffer_pointer = 0;
 	}
+	this->currPosition = this->rs.tellg();
 	this->head = rec;
 	return rec;
 }
 
+// Old function not used by this program anymore
 Record Tape::ReadRecordInternal(){
 	double arr[3];
 	this->rs.read((char*) arr, 3*sizeof(double));
@@ -160,6 +169,7 @@ void Tape::WriteRecord(Record record){
 	this->head = record;
 }
 
+// Old function not used by this program anymore
 void Tape::WriteRecordInternal(Record record){
 	double arr[3] = {record.GetA(), record.GetB(), record.GetC()};
 	this->ws.write((char*)arr, 3*sizeof(double));
@@ -215,7 +225,7 @@ void Tape::printContents(){
 	double prev_key;
 	bool first = true;
 	std::string line;
-	if(this->readMode && !this->endReached){
+	if(this->readMode && this->runs){
 		prev_key = this->printBufferReadMode();
 		if(this->buffer_pointer < BUFFER_SIZE)
 			first = false;
