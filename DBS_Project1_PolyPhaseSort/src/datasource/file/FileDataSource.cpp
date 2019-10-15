@@ -8,7 +8,7 @@
 #include <datasource/file/FileDataSource.h>
 
 void FileDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg, int verbosity_level){
-	this->verbosity_level = verbosity_level;
+	this->verbosityLevel = verbosity_level;
 	std::fstream baseFile;
 	baseFile.open(arg.c_str(), std::ios::in);
 	Record rec_cont;
@@ -43,7 +43,7 @@ Record FileDataSource::loadFromFile(std::fstream& fs){
 	if(line != ""){
 		std::stringstream ss(line);
 		ss >> a >> b >> c;
-		if(this->verbosity_level >= VERBOSITY_NORMAL)
+		if(this->verbosityLevel >= VERBOSITY_NORMAL)
 			std::cout << a << " " << b << " " << c << '\n';
 		return Record(a, b, c);
 	}
@@ -61,15 +61,15 @@ Record FileDataSource::getRunFromFile(std::fstream& fs, Tape& tape, Record rec_c
 
 		if(!first)
 			// Ordered by smallest first
-			if(rec_prev.GetKey() > rec_curr.GetKey()){
+			if(rec_prev.getKey() > rec_curr.getKey()){
 				return rec_curr;
 			}
 		if(rec_curr.isValid()){
 			if(first &&
-					((tape.head.isValid() && tape.head.GetKey() > rec_curr.GetKey())
+					((tape.head.isValid() && tape.head.getKey() > rec_curr.getKey())
 					|| !tape.head.isValid()))
 				tape.runs++;
-			tape.WriteRecord(rec_curr);
+			tape.writeRecord(rec_curr);
 		}
 		rec_prev = rec_curr;
 		first = false;

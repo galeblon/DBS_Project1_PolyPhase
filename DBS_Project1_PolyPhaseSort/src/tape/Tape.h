@@ -15,51 +15,52 @@
 #include <limits>
 #include "../record/Record.h"
 
-#define BUFFER_SIZE 3
-// Size of buffer in bytes will be BUFFOR_SIZE * sizeof(double)
+#define BUFFER_SIZE 30
+#define RECORD_SIZE (3*sizeof(double))
+#define BUFFER_SIZE_BYTES (BUFFER_SIZE*RECORD_SIZE)
 
 class Tape {
 public:
 	Tape();
-	Tape(std::string id);
-	Tape(std::string id, bool debug);
 	Tape(const Tape&);
+	Tape(std::string id);
 
 	virtual ~Tape();
 
-	Record ReadRecord();
-	void WriteRecord(Record record);
+	int getDiskWrites(){ return this->diskWrites;}
+	int getDiskReads(){ return this->diskReads;}
+	std::string getName() {return this->name;}
 
 	void printContents();
 
-	std::string getName() {return this->name;}
-	bool IsAtEnd(){ return this->endReached;}
+	bool isAtEnd(){ return this->endReached;}
 
-	int getDiskWrites(){ return this->diskWrites;}
-	int getDiskReads(){ return this->diskReads;}
+	Record readRecord();
+	void writeRecord(Record record);
 
 	Record head;
 	int runs;
 	int runsDummy;
 
 private:
-	void LoadBufferInternal();
-	void SaveBufferInternal();
-	Record ReadRecordInternal();
-	void WriteRecordInternal(Record record);
+	void loadBufferInternal();
+	void saveBufferInternal();
+
+	Record readRecordInternal();
+	void writeRecordInternal(Record record);
 
 	double printBufferReadMode();
 	void printBufferWriteMode(bool first, double prev_key);
 
 	void printSingleRecord(Record rec);
 
+	void gotoLine(unsigned int pos);
 
 	std::fstream ws;
 	std::fstream rs;
 
 	std::string name;
-	void GotoLine(unsigned int pos);
-	bool debug;
+
 	bool endReached;
 	unsigned int currPosition;
 	bool readMode;

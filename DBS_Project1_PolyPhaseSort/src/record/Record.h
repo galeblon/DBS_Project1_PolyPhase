@@ -14,13 +14,13 @@ public:
 	Record(double a, double b, double c);
 	virtual ~Record();
 
-	double SumOfRoots(){ return -b/a;}
+	double sumOfRoots(){ return -b/a;}
 
-	double GetA(){ return a;}
-	double GetB(){ return b;}
-	double GetC(){ return c;}
+	double getA(){ return a;}
+	double getB(){ return b;}
+	double getC(){ return c;}
 
-	double GetKey(){ return -b/a;}
+	double getKey(){ return -b/a;}
 
 	bool isValid() {return correct;}
 

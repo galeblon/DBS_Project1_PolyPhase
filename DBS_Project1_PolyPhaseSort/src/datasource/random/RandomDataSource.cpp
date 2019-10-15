@@ -8,7 +8,7 @@
 #include <datasource/random/RandomDataSource.h>
 
 void RandomDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg, int verbosity_level){
-	this->verbosity_level = verbosity_level;
+	this->verbosityLevel = verbosity_level;
 	std::istringstream(arg) >> this->recordsToGenerate;
 	Record rec_cont;
 	//Initial run to start the fill
@@ -36,7 +36,6 @@ void RandomDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::s
 
 
 Record RandomDataSource::generateRecord(){
-	int COEFFICIENT_MAX = 100;
 	double a = 1;
 	double b = 0;
 	double c = 1;
@@ -45,7 +44,7 @@ Record RandomDataSource::generateRecord(){
 		b = -COEFFICIENT_MAX + (double)std::rand() / RAND_MAX * COEFFICIENT_MAX * 2;
 		c = -COEFFICIENT_MAX + (double)std::rand() / RAND_MAX * COEFFICIENT_MAX * 2;
 	}
-	if(this->verbosity_level >= VERBOSITY_NORMAL)
+	if(this->verbosityLevel >= VERBOSITY_NORMAL)
 		std::cout << a << " " << b << " " << c << '\n';
 	return Record(a, b, c);
 }
@@ -61,14 +60,14 @@ Record RandomDataSource::getRunFromRandom(Tape& tape, Record rec_cont){
 
 		if(!first)
 			// Ordered by smallest first
-			if(rec_prev.GetKey() > rec_curr.GetKey())
+			if(rec_prev.getKey() > rec_curr.getKey())
 				return rec_curr;
 		if(rec_curr.isValid()){
 			if(first &&
-					((tape.head.isValid() && tape.head.GetKey() > rec_curr.GetKey())
+					((tape.head.isValid() && tape.head.getKey() > rec_curr.getKey())
 					|| !tape.head.isValid()))
 				tape.runs++;
-			tape.WriteRecord(rec_curr);
+			tape.writeRecord(rec_curr);
 			this->recordsToGenerate--;
 		}
 		rec_prev = rec_curr;

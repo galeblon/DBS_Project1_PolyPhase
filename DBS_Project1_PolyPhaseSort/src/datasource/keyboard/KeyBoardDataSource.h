@@ -14,14 +14,14 @@
 
 class KeyBoardDataSource: public DataSource {
 public:
-	KeyBoardDataSource(): recordsToGenerate(0), verbosity_level(0) {}
+	KeyBoardDataSource(): recordsToGenerate(0), verbosityLevel(0) {}
 	~KeyBoardDataSource() {}
 	void InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg, int verbosity_level);
 private:
 	Record askForRecord();
 	Record getRunFromKeyBoard(Tape& tape, Record rec_cont);
 	unsigned int recordsToGenerate;
-	int verbosity_level;
+	int verbosityLevel;
 };
 
 #endif /* SRC_DATASOURCE_KEYBOARD_KEYBOARDDATASOURCE_H_ */

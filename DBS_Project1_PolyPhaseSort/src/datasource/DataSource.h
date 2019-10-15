@@ -11,7 +11,7 @@
 #include <string>
 #include "../tape/Tape.h"
 
-// Abstract class linking all possible datasources
+// Abstract class linking all possible data sources that can feed records into tapes
 class DataSource {
 public:
 	virtual ~DataSource() {}

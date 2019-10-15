@@ -18,8 +18,6 @@
 #include <sstream>
 #include <string>
 
-using namespace std;
-
 bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, int verbose);
 void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 void printPhase(Tape* tapes[], int tapeNum, int verbose);
@@ -27,7 +25,7 @@ void printHelp();
 void getDiskUsage(Tape** tapes, int tapeNum, int* dr, int* dw);
 
 int main(int argc, char** argv) {
-	std::srand( /*time(NULL)*/ 16);
+	std::srand(time(NULL));
 	if(argc < 4){
 		printHelp();
 		return 0;
@@ -185,7 +183,7 @@ void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask){
 				Record curr_rec;
 				if(!tapes[i]->head.isValid()){
 					// Try to read record, if can't then we are at end
-					curr_rec = tapes[i]->ReadRecord();
+					curr_rec = tapes[i]->readRecord();
 					if(!curr_rec.isValid()){
 						endRunMask |= 1<<i;
 						continue;
@@ -196,8 +194,8 @@ void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask){
 					if(loadNewMask & 1<<i){
 						// It was already used, try to load a new record. Check if run ends
 						Record old_rec = tapes[i]->head;
-						curr_rec = tapes[i]->ReadRecord();
-						if(!curr_rec.isValid() || old_rec.GetKey() > curr_rec.GetKey()){
+						curr_rec = tapes[i]->readRecord();
+						if(!curr_rec.isValid() || old_rec.getKey() > curr_rec.getKey()){
 							// Run has been broken
 							endRunMask |= 1<<i;
 							loadNewMask &= !(1<<i);
@@ -209,7 +207,7 @@ void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask){
 						curr_rec = tapes[i]->head;
 					}
 				}
-				if(!min.isValid() || min.GetKey() > curr_rec.GetKey()){
+				if(!min.isValid() || min.getKey() > curr_rec.getKey()){
 					// New min
 					min = curr_rec;
 					min_index = i;
@@ -219,7 +217,7 @@ void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask){
 		if(!min.isValid())
 			// It appears we are done here
 			break;
-		tapes[outTape]->WriteRecord(min);
+		tapes[outTape]->writeRecord(min);
 		loadNewMask |= 1<<min_index;
 		min = Record();
 	}

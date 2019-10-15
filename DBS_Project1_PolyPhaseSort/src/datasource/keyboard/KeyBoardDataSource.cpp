@@ -8,7 +8,7 @@
 #include <datasource/keyboard/KeyBoardDataSource.h>
 
 void KeyBoardDataSource::InitialDistribution(Tape* tapes[], int numOfTapes, std::string arg, int verbosity_level){
-	this->verbosity_level = verbosity_level;
+	this->verbosityLevel = verbosity_level;
 	std::istringstream(arg) >> this->recordsToGenerate;
 	Record rec_cont;
 	//Initial run to start the fill
@@ -54,14 +54,14 @@ Record KeyBoardDataSource::getRunFromKeyBoard(Tape& tape, Record rec_cont){
 
 		if(!first)
 			// Ordered by smallest first
-			if(rec_prev.GetKey() > rec_curr.GetKey())
+			if(rec_prev.getKey() > rec_curr.getKey())
 				return rec_curr;
 		if(rec_curr.isValid()){
 			if(first &&
-					((tape.head.isValid() && tape.head.GetKey() > rec_curr.GetKey())
+					((tape.head.isValid() && tape.head.getKey() > rec_curr.getKey())
 					|| !tape.head.isValid()))
 				tape.runs++;
-			tape.WriteRecord(rec_curr);
+			tape.writeRecord(rec_curr);
 			this->recordsToGenerate--;
 		}
 		rec_prev = rec_curr;
