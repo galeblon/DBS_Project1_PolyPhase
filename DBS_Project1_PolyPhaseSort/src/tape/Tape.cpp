@@ -225,7 +225,11 @@ void Tape::printContents(){
 	double prev_key;
 	bool first = true;
 	std::string line;
-	if(this->readMode && this->runs){
+	if(this->head.isValid() && !this->buffer_pointer){
+		first = false;
+		printSingleRecord(head);
+	}
+	if(this->readMode && this->buffer_loaded){
 		prev_key = this->printBufferReadMode();
 		if(this->buffer_pointer < BUFFER_SIZE)
 			first = false;

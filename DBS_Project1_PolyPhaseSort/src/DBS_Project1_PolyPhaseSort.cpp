@@ -6,47 +6,44 @@
 // Description : PolyPhase sorting program.
 //============================================================================
 
-#include "VerbosityLevels.h"
 #include "./tape/Tape.h"
 #include "datasource/DataSource.h"
 #include "datasource/file/FileDataSource.h"
 #include "datasource/random/RandomDataSource.h"
 #include "datasource/keyboard/KeyBoardDataSource.h"
+#include "VerbosityLevels.h"
 #include <cstdlib>
-#include <string>
 #include <fstream>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
 bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, int verbose);
 void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 void printPhase(Tape* tapes[], int tapeNum, int verbose);
+void printHelp();
+void getDiskUsage(Tape** tapes, int tapeNum, int* dr, int* dw);
 
 int main(int argc, char** argv) {
-	// TODO bring back time(NULL)
-	std::srand(time(NULL));
+	std::srand( /*time(NULL)*/ 16);
 	if(argc < 4){
-		std::cout << "This is a simple program presenting the PolyPhase merging algorithm used on records in form of coefficients of polynomial of degree 2, with delta >= 0\n"
-				  << "Program usage:\n"
-				  << "programName [numberOfTapes] [dataSource] [arg] [verbosity*]\n"
-				  << "\tnumberOfTapes - number of tapes used during the algorithm. Minimum 3 tapes required (note only N-1 tapes take part in merging at any time)\n"
-				  << "\tdataSource - only takes 'F' - file, 'R' - random generated, 'K' - standard input\n"
-				  << "\targ - if file data source is selected provide file name containing records, otherwise provide number of records to generate/read from input\n"
-				  << "\tverbosity optional parameter, if present will set information printing verbosity:\n"
-				  << "\t\t0 - Default value, just prints number of runs in each phase.\n"
-				  << "\t\t1 - Everything in level 0 plus prints the contents to sort before and after sort\n"
-				  << "\t\t2 - Everything in level 1 plus prints the contents of tapes in each phase\n";
+		printHelp();
 		return 0;
 	}
-	int TAPE_NUM;
+
+	// Number of tapes used in sorting (N-1 used for distribution, 1 for merging
+	int tapeNum;
+	// Datasource that will feed the tapes records
 	DataSource* src;
 	std::string arg;
-	int verbose;
+
+	int verbosityLevel;
+
 	try{
-		std::istringstream(argv[1]) >> TAPE_NUM;
-		if(TAPE_NUM < 3)
+		std::istringstream(argv[1]) >> tapeNum;
+		if(tapeNum < 3)
 			throw "Not enough tapes";
 		switch(argv[2][0]){
 			case 'f':
@@ -64,24 +61,25 @@ int main(int argc, char** argv) {
 		}
 		arg = argv[3];
 		if(argc >= 5)
-			std::istringstream(argv[4]) >> verbose;
+			std::istringstream(argv[4]) >> verbosityLevel;
 	} catch(...){
 		std::cerr << "Exception during parsing of arguments\n";
 		return 1;
 	}
 
-	Tape** tapes = new Tape*[TAPE_NUM];
+	Tape** tapes = new Tape*[tapeNum];
 	std::stringstream ss;
-	for(int i=0; i<TAPE_NUM; i++){
+	for(int i=0; i<tapeNum; i++){
 		ss << i+1;
 		tapes[i] = new Tape(ss.str());
 		ss.str("");
 	}
 
+	// Stage 1. distribution
 	try{
-		if(verbose >= VERBOSITY_NORMAL)
+		if(verbosityLevel >= VERBOSITY_NORMAL)
 			std::cout << "\n\nInput file:\n";
-		src->InitialDistribution(tapes, TAPE_NUM, arg, verbose);
+		src->InitialDistribution(tapes, tapeNum, arg, verbosityLevel);
 		delete src;
 	} catch (char const* err){
 		std::cerr << "Exception during initial distribution: "<< err << '\n';
@@ -89,39 +87,29 @@ int main(int argc, char** argv) {
 	}
 
 	// Reset heads
-	for(int i=0; i<TAPE_NUM; i++){
+	for(int i=0; i<tapeNum; i++){
 		tapes[i]->head = Record();
 	}
 
-	// Print state after initial distribution
 	std::cout << "\n\nPhase 0 (After distribution)\n";
-	printPhase(tapes, TAPE_NUM, verbose);
+	printPhase(tapes, tapeNum, verbosityLevel);
 
-	// Repeat merging phase until it's sorted
+	// Stage 2. merging
+	// Repeat merging phase until we're left with one run.
 	int dr=0, dw=0;
-	int phase = 1;
+	int phase=1;
 	do{
-		dr = 0;
-		dw = 0;
-		for(int i=0; i<TAPE_NUM; i++){
-			dr += tapes[i]->getDiskReads();
-			dw += tapes[i]->getDiskWrites();
-		}
+		getDiskUsage(tapes, tapeNum, &dr, &dw);
 		std::cout << "\n\nPhase " << phase << "\t| Disk usage so far: W:" << dw << " R:" << dr << ":\n";
 		phase++;
-	} while(!sortPolyPhaseSinglePhase(tapes, TAPE_NUM, verbose));
+	} while(!sortPolyPhaseSinglePhase(tapes, tapeNum, verbosityLevel));
 
-	dr = 0;
-	dw = 0;
-	for(int i=0; i<TAPE_NUM; i++){
-		dr += tapes[i]->getDiskReads();
-		dw += tapes[i]->getDiskWrites();
-	}
+	getDiskUsage(tapes, tapeNum, &dr, &dw);
 	std::cout << "\n\nDisk usage total: W:" << dw << " R:" << dr << '\n';
 	// Print the sorted file
-	if(verbose >= VERBOSITY_NORMAL){
+	if(verbosityLevel >= VERBOSITY_NORMAL){
 		std::cout << "\n\nSorted file:\n";
-		for(int i=0; i<TAPE_NUM; i++)
+		for(int i=0; i<tapeNum; i++)
 			if(tapes[i]->runs ==  1){
 				tapes[i]->printContents();
 				break;
@@ -129,7 +117,7 @@ int main(int argc, char** argv) {
 	}
 
 	// Cleanup
-	for(int i=0; i<TAPE_NUM; i++)
+	for(int i=0; i<tapeNum; i++)
 		delete tapes[i];
 	delete[] tapes;
 
@@ -246,5 +234,28 @@ void printPhase(Tape* tapes[], int tapeNum, int verbose){
 			tapes[i]->printContents();
 		} else
 			std::cout << '\n';
+	}
+}
+
+
+void printHelp(){
+	std::cout << "This is a simple program presenting the PolyPhase merging algorithm used on records in form of coefficients of polynomial of degree 2, with delta >= 0\n"
+			  << "Program usage:\n"
+			  << "programName [numberOfTapes] [dataSource] [arg] [verbosity*]\n"
+			  << "\tnumberOfTapes - number of tapes used during the algorithm. Minimum 3 tapes required (note only N-1 tapes take part in merging at any time)\n"
+			  << "\tdataSource - only takes 'F' - file, 'R' - random generated, 'K' - standard input\n"
+			  << "\targ - if file data source is selected provide file name containing records, otherwise provide number of records to generate/read from input\n"
+			  << "\tverbosity optional parameter, if present will set information printing verbosity:\n"
+			  << "\t\t0 - Default value, just prints number of runs in each phase.\n"
+			  << "\t\t1 - Everything in level 0 plus prints the contents to sort before and after sort\n"
+			  << "\t\t2 - Everything in level 1 plus prints the contents of tapes in each phase\n";
+}
+
+void getDiskUsage(Tape** tapes, int tapeNum, int* dr, int* dw){
+	*dr = 0;
+	*dw = 0;
+	for(int i=0; i<tapeNum; i++){
+		*dr += tapes[i]->getDiskReads();
+		*dw += tapes[i]->getDiskWrites();
 	}
 }

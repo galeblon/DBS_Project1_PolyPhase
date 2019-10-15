@@ -15,7 +15,7 @@
 #include <limits>
 #include "../record/Record.h"
 
-#define BUFFER_SIZE 5
+#define BUFFER_SIZE 3
 // Size of buffer in bytes will be BUFFOR_SIZE * sizeof(double)
 
 class Tape {
