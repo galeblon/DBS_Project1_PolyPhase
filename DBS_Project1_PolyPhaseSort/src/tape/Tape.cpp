@@ -90,14 +90,23 @@ void Tape::LoadBufferInternal(){
 }
 
 void Tape::SaveBufferInternal(){
-	bool saved = false;
+	double arr[3*BUFFER_SIZE];
+	bool toSave = false;
 	for(int i=0; i<this->buffer_pointer; i++){
 		if(buffer[i].isValid()){
-			WriteRecordInternal(buffer[i]);
-			saved = true;
+			arr[3*i+0] = buffer[i].GetA();
+			arr[3*i+1] = buffer[i].GetB();
+			arr[3*i+2] = buffer[i].GetC();
+			//WriteRecordInternal(buffer[i]);
+			toSave = true;
 		}
+		else
+			break;
 	}
-	if(saved){
+	if(toSave){
+		this->ws.write((char*)arr, 3*sizeof(double)*this->buffer_pointer);
+		this->ws.flush();
+		this->head = buffer[this->buffer_pointer-1];
 		this->buffer_pointer = 0;
 		this->buffer_loaded = false;
 		this->diskWrites++;
@@ -139,6 +148,7 @@ Record Tape::ReadRecordInternal(){
 void Tape::WriteRecord(Record record){
 	if(this->readMode){
 		this->readMode = false;
+		this->endReached = false;
 		this->ws.close();
 		this->ws.open(this->name.c_str(), std::ios::out | std::ios::binary);
 		this->buffer_loaded = false;
@@ -165,7 +175,7 @@ void Tape::GotoLine(unsigned int pos){
 double Tape::printBufferReadMode(){
 	double prev_key;
 	bool first = true;
-	for(int i=this->buffer_pointer; i<BUFFER_SIZE; i++){
+	for(int i=this->buffer_pointer-1; i<BUFFER_SIZE; i++){
 		Record rec = this->buffer[i];
 		if(!rec.isValid())
 			break;
@@ -173,6 +183,7 @@ double Tape::printBufferReadMode(){
 			std::cout << "|====================================================================|\n";
 		this->printSingleRecord(rec);
 		prev_key = rec.GetKey();
+		first = false;
 	}
 	return prev_key;
 }
@@ -185,6 +196,7 @@ void Tape::printBufferWriteMode(bool first, double prev_key){
 			std::cout << "|====================================================================|\n";
 		this->printSingleRecord(rec);
 		prev_key = rec.GetKey();
+		first = false;
 	}
 }
 
