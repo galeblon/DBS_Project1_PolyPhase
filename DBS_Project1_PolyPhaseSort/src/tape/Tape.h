@@ -29,6 +29,9 @@ public:
 
 	int getDiskWrites(){ return this->diskWrites;}
 	int getDiskReads(){ return this->diskReads;}
+	int getRecordWrites(){ return this->recordWrites;}
+	int getRecordReads(){ return this->recordReads;}
+
 	std::string getName() {return this->name;}
 
 	void printContents();
@@ -71,6 +74,8 @@ private:
 
 	int diskReads;
 	int diskWrites;
+	int recordReads;
+	int recordWrites;
 };
 
 #endif /* TAPE_TAPE_H_ */

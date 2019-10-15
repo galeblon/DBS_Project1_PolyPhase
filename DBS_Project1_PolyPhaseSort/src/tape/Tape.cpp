@@ -16,7 +16,9 @@ Tape::Tape(): head(),
 			  buffer_pointer(0),
 			  buffer_loaded(false),
 			  diskReads(0),
-			  diskWrites(0){
+			  diskWrites(0),
+			  recordReads(0),
+			  recordWrites(0){
 	this->name = "Tape_default";
 	this->ws.open(this->name.c_str(), std::ios::out | std::ios::binary);
 	this->rs.open(this->name.c_str(), std::ios::in | std::ios::binary);
@@ -31,7 +33,9 @@ Tape::Tape(std::string id):  head(),
 							 buffer_pointer(0),
 							 buffer_loaded(false),
 							 diskReads(0),
-							 diskWrites(0){
+							 diskWrites(0),
+							 recordReads(0),
+							 recordWrites(0){
 	this->name = std::string("Tape_") + id;
 	this->ws.open(this->name.c_str(), std::ios::out | std::ios::binary);
 	this->rs.open(this->name.c_str(), std::ios::in | std::ios::binary);
@@ -46,7 +50,9 @@ Tape::Tape(const Tape& other): head(),
 							   buffer_pointer(0),
 							   buffer_loaded(false),
 							   diskReads(0),
-							   diskWrites(0){
+							   diskWrites(0),
+							   recordReads(0),
+							   recordWrites(0){
 	this->name = other.name;
 	this->ws.open(this->name.c_str(), std::ios::out | std::ios::binary);
 	this->rs.open(this->name.c_str(), std::ios::in | std::ios::binary);
@@ -111,6 +117,7 @@ Record Tape::readRecord(){
 	}
 	this->currPosition = this->rs.tellg();
 	this->head = rec;
+	this->recordReads++;
 	return rec;
 }
 
@@ -127,6 +134,7 @@ void Tape::writeRecord(Record record){
 		this->saveBufferInternal();
 	this->buffer[this->buffer_pointer++] = record;
 	this->head = record;
+	this->recordWrites++;
 }
 
 void Tape::loadBufferInternal(){

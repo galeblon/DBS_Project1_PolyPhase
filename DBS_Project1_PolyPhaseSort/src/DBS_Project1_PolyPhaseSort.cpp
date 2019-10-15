@@ -22,7 +22,7 @@ bool sortPolyPhaseSinglePhase(Tape* tapes[], int tapeNum, int verbose);
 void merging(Tape* tapes[], int tapeNum, int outTape, int tapesMask);
 void printPhase(Tape* tapes[], int tapeNum, int verbose);
 void printHelp();
-void getDiskUsage(Tape** tapes, int tapeNum, int* dr, int* dw);
+void getDiskUsage(Tape** tapes, int tapeNum, int* dr, int* dw, int* rr, int* rw);
 
 int main(int argc, char** argv) {
 	std::srand(time(NULL));
@@ -94,16 +94,16 @@ int main(int argc, char** argv) {
 
 	// Stage 2. merging
 	// Repeat merging phase until we're left with one run.
-	int dr=0, dw=0;
+	int dr=0, dw=0, rr=0, rw=0;
 	int phase=1;
 	do{
-		getDiskUsage(tapes, tapeNum, &dr, &dw);
-		std::cout << "\n\nPhase " << phase << "\t| Disk usage so far: W:" << dw << " R:" << dr << ":\n";
+		getDiskUsage(tapes, tapeNum, &dr, &dw, &rr, &rw);
+		std::cout << "\n\nPhase " << phase << "\t| Disk usage so far: W:" << dw << " R:" << dr << " | rW:" << rw << " rR:" << rr <<"\n";
 		phase++;
 	} while(!sortPolyPhaseSinglePhase(tapes, tapeNum, verbosityLevel));
 
-	getDiskUsage(tapes, tapeNum, &dr, &dw);
-	std::cout << "\n\nDisk usage total: W:" << dw << " R:" << dr << '\n';
+	getDiskUsage(tapes, tapeNum, &dr, &dw, &rr, &rw);
+	std::cout << "\n\nDisk usage total: dW:" << dw << " dR:" << dr << " | rW:" << rw << " rR:" << rr <<'\n';
 	// Print the sorted file
 	if(verbosityLevel >= VERBOSITY_NORMAL){
 		std::cout << "\n\nSorted file:\n";
@@ -249,11 +249,15 @@ void printHelp(){
 			  << "\t\t2 - Everything in level 1 plus prints the contents of tapes in each phase\n";
 }
 
-void getDiskUsage(Tape** tapes, int tapeNum, int* dr, int* dw){
+void getDiskUsage(Tape** tapes, int tapeNum, int* dr, int* dw, int* rr, int* rw){
 	*dr = 0;
 	*dw = 0;
+	*rr = 0;
+	*rw = 0;
 	for(int i=0; i<tapeNum; i++){
 		*dr += tapes[i]->getDiskReads();
 		*dw += tapes[i]->getDiskWrites();
+		*rr += tapes[i]->getRecordReads();
+		*rw += tapes[i]->getRecordWrites();
 	}
 }
