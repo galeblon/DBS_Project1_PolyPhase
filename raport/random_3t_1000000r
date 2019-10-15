@@ -1,0 +1,171 @@
+
+
+Phase 0 (After distribution)
+Tape_1 196418(0) runs
+Tape_2 317811(13887) runs
+Tape_3 0(0) runs
+
+
+Phase 1	| Disk usage so far: W:33333 R:0 | rW:1000000 rR:0
+Tape_1 0(0) runs
+Tape_2 121393(0) runs
+Tape_3 196418(0) runs
+
+
+Phase 2	| Disk usage so far: W:58598 R:25265 | rW:1757906 rR:757908
+Tape_1 121393(0) runs
+Tape_2 0(0) runs
+Tape_3 75025(0) runs
+
+
+Phase 3	| Disk usage so far: W:81935 R:48602 | rW:2457991 rR:1457994
+Tape_1 46368(0) runs
+Tape_2 75025(0) runs
+Tape_3 0(0) runs
+
+
+Phase 4	| Disk usage so far: W:105995 R:72662 | rW:3179775 rR:2179779
+Tape_1 0(0) runs
+Tape_2 28657(0) runs
+Tape_3 46368(0) runs
+
+
+Phase 5	| Disk usage so far: W:129777 R:96444 | rW:3893211 rR:2893216
+Tape_1 28657(0) runs
+Tape_2 0(0) runs
+Tape_3 17711(0) runs
+
+
+Phase 6	| Disk usage so far: W:153668 R:120335 | rW:4609926 rR:3609932
+Tape_1 10946(0) runs
+Tape_2 17711(0) runs
+Tape_3 0(0) runs
+
+
+Phase 7	| Disk usage so far: W:177516 R:144183 | rW:5325354 rR:4325361
+Tape_1 0(0) runs
+Tape_2 6765(0) runs
+Tape_3 10946(0) runs
+
+
+Phase 8	| Disk usage so far: W:201572 R:168239 | rW:6047014 rR:5047022
+Tape_1 6765(0) runs
+Tape_2 0(0) runs
+Tape_3 4181(0) runs
+
+
+Phase 9	| Disk usage so far: W:225719 R:192386 | rW:6771402 rR:5771411
+Tape_1 2584(0) runs
+Tape_2 4181(0) runs
+Tape_3 0(0) runs
+
+
+Phase 10	| Disk usage so far: W:249743 R:216410 | rW:7492116 rR:6492126
+Tape_1 0(0) runs
+Tape_2 1597(0) runs
+Tape_3 2584(0) runs
+
+
+Phase 11	| Disk usage so far: W:273850 R:240518 | rW:8215314 rR:7215325
+Tape_1 1597(0) runs
+Tape_2 0(0) runs
+Tape_3 987(0) runs
+
+
+Phase 12	| Disk usage so far: W:297971 R:264638 | rW:8938918 rR:7938930
+Tape_1 610(0) runs
+Tape_2 987(0) runs
+Tape_3 0(0) runs
+
+
+Phase 13	| Disk usage so far: W:322076 R:288743 | rW:9662059 rR:8662072
+Tape_1 0(0) runs
+Tape_2 377(0) runs
+Tape_3 610(0) runs
+
+
+Phase 14	| Disk usage so far: W:346207 R:312874 | rW:10385975 rR:9385989
+Tape_1 377(0) runs
+Tape_2 0(0) runs
+Tape_3 233(0) runs
+
+
+Phase 15	| Disk usage so far: W:370317 R:336985 | rW:11109271 rR:10109286
+Tape_1 144(0) runs
+Tape_2 233(0) runs
+Tape_3 0(0) runs
+
+
+Phase 16	| Disk usage so far: W:394438 R:361106 | rW:11832885 rR:10832901
+Tape_1 0(0) runs
+Tape_2 89(0) runs
+Tape_3 144(0) runs
+
+
+Phase 17	| Disk usage so far: W:418552 R:385219 | rW:12556293 rR:11556310
+Tape_1 89(0) runs
+Tape_2 0(0) runs
+Tape_3 55(0) runs
+
+
+Phase 18	| Disk usage so far: W:442681 R:409349 | rW:13280163 rR:12280181
+Tape_1 34(0) runs
+Tape_2 55(0) runs
+Tape_3 0(0) runs
+
+
+Phase 19	| Disk usage so far: W:466804 R:433472 | rW:14003849 rR:13003868
+Tape_1 0(0) runs
+Tape_2 21(0) runs
+Tape_3 34(0) runs
+
+
+Phase 20	| Disk usage so far: W:490929 R:457597 | rW:14727598 rR:13727618
+Tape_1 21(0) runs
+Tape_2 0(0) runs
+Tape_3 13(0) runs
+
+
+Phase 21	| Disk usage so far: W:515052 R:481719 | rW:15451260 rR:14451281
+Tape_1 8(0) runs
+Tape_2 13(0) runs
+Tape_3 0(0) runs
+
+
+Phase 22	| Disk usage so far: W:539189 R:505855 | rW:16175342 rR:15175364
+Tape_1 0(0) runs
+Tape_2 5(0) runs
+Tape_3 8(0) runs
+
+
+Phase 23	| Disk usage so far: W:563231 R:529898 | rW:16896599 rR:15896622
+Tape_1 5(0) runs
+Tape_2 0(0) runs
+Tape_3 3(0) runs
+
+
+Phase 24	| Disk usage so far: W:587537 R:554204 | rW:17625754 rR:16625778
+Tape_1 2(0) runs
+Tape_2 3(0) runs
+Tape_3 0(0) runs
+
+
+Phase 25	| Disk usage so far: W:611154 R:577820 | rW:18334235 rR:17334260
+Tape_1 0(0) runs
+Tape_2 1(0) runs
+Tape_3 2(0) runs
+
+
+Phase 26	| Disk usage so far: W:636611 R:603278 | rW:19097927 rR:18097953
+Tape_1 1(0) runs
+Tape_2 0(0) runs
+Tape_3 1(0) runs
+
+
+Phase 27	| Disk usage so far: W:657206 R:623873 | rW:19715758 rR:18715785
+Tape_1 0(0) runs
+Tape_2 1(0) runs
+Tape_3 0(0) runs
+
+
+Disk usage total: dW:690540 dR:657207 | rW:20715758 rR:19715786
